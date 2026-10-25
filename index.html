@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAGnition — Intelligent Document Retrieval & Question Answering</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon-wrapper">
+            <div class="brand-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <path d="M11 8v6"></path>
+                <path d="M8 11h6"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="brand-title-wrap">
+            <div class="brand-title">
+              <span class="accent-rag">RAG</span><span class="accent-nition">nition</span>
+            </div>
+            <div class="brand-tagline">Retrieve knowledge. Generate grounded answers.</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="qa">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          QA Workspace
+        </button>
+        <button class="nav-item" data-tab="docs">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Document Library
+        </button>
+        <button class="nav-item" data-tab="methodology">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+          Methodology & Research
+        </button>
+        <button class="nav-item" data-tab="architecture">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          System Architecture
+        </button>
+        <button class="nav-item" data-tab="guide">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          Presentation Guide
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="corpus-badge">
+          <span>Active Corpus</span>
+          <span id="corpusDocCount">3 Docs</span>
+        </div>
+        <div class="corpus-badge">
+          <span>Indexed Chunks</span>
+          <span id="corpusChunkCount">12 Chunks</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 6px;">
+          RAGnition AI &bull; Version 2.0
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <main class="main-wrapper">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div>
+          <h1 class="page-title" id="pageTitle">QA Workspace</h1>
+          <p class="page-desc" id="pageDesc">Intelligent document retrieval and evidence-grounded question answering</p>
+        </div>
+        <div class="system-status-indicator">
+          <span class="status-pulsar"></span>
+          <span>Index Online &bull; Ready</span>
+        </div>
+      </header>
+
+      <!-- Content Container -->
+      <div class="content-container">
+
+        <!-- TAB 1: QA Workspace -->
+        <section id="tab-qa" class="tab-content active">
+
+          <!-- Dashboard Stats Banner -->
+          <div class="stats-banner">
+            <div class="stat-box">
+              <div class="stat-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">Active Documents</span>
+                <span class="stat-value" id="statDocCount">3</span>
+              </div>
+            </div>
+
+            <div class="stat-box">
+              <div class="stat-icon cyan">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">Indexed Chunks</span>
+                <span class="stat-value" id="statChunkCount">12</span>
+              </div>
+            </div>
+
+            <div class="stat-box">
+              <div class="stat-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">Corpus Vocabulary</span>
+                <span class="stat-value" id="statWordCount">~1,100</span>
+              </div>
+            </div>
+
+            <div class="stat-box">
+              <div class="stat-icon cyan">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">Retrieval Latency</span>
+                <span class="stat-value" id="statLatency">Ready</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="qa-grid">
+            <!-- Left Panel: Query Console & Grounded Answer -->
+            <div>
+              <div class="card" style="margin-bottom: 24px;">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <svg class="card-title-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Question Console
+                  </h2>
+                  <span class="card-subtitle">Natural language query execution</span>
+                </div>
+
+                <div class="form-group">
+                  <textarea id="questionInput" class="textarea-input" placeholder="Type your research question (e.g., What is Retrieval-Augmented Generation?)..." rows="3"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 22px;">
+                  <button id="askBtn" class="btn btn-primary" style="flex: 1;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Retrieve & Answer
+                  </button>
+                  <button id="clearBtn" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Clear
+                  </button>
+                </div>
+
+                <div class="suggestion-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                  </svg>
+                  Example Research Queries
+                </div>
+                <div class="suggestion-chips">
+                  <button class="chip-btn" data-query="What is Retrieval-Augmented Generation?">
+                    <span>What is Retrieval-Augmented Generation?</span>
+                    <span class="chip-tag">RAG Architecture</span>
+                  </button>
+                  <button class="chip-btn" data-query="How does document retrieval improve question answering?">
+                    <span>How does document retrieval improve question answering?</span>
+                    <span class="chip-tag">Hallucination Mitigation</span>
+                  </button>
+                  <button class="chip-btn" data-query="What causes climate change?">
+                    <span>What causes climate change?</span>
+                    <span class="chip-tag">Climate Corpus</span>
+                  </button>
+                  <button class="chip-btn" data-query="What are the rules and regulations of lunar orbital spaceflight in 2050?">
+                    <span>What are the rules and regulations of lunar orbital spaceflight in 2050?</span>
+                    <span class="chip-tag" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3);">Out-of-Domain Test</span>
+                  </button>
+                </div>
+
+                <!-- Pipeline Status Track -->
+                <div class="pipeline-track">
+                  <div class="pipeline-step" id="pipeStep1">
+                    <div class="step-num">1</div>
+                    <span>Query Parse</span>
+                  </div>
+                  <span class="pipeline-arrow">&rarr;</span>
+                  <div class="pipeline-step" id="pipeStep2">
+                    <div class="step-num">2</div>
+                    <span>BM25 Retrieval</span>
+                  </div>
+                  <span class="pipeline-arrow">&rarr;</span>
+                  <div class="pipeline-step" id="pipeStep3">
+                    <div class="step-num">3</div>
+                    <span>CRAG Check</span>
+                  </div>
+                  <span class="pipeline-arrow">&rarr;</span>
+                  <div class="pipeline-step" id="pipeStep4">
+                    <div class="step-num">4</div>
+                    <span>Grounded Answer</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Answer Box -->
+              <div class="answer-box" id="answerContainer">
+                <div class="answer-header">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="answer-badge">RAGnition Grounded Answer</span>
+                    <button id="copyAnswerBtn" class="btn btn-ghost btn-sm" title="Copy answer text" style="padding: 3px 8px; font-size: 0.74rem;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <span id="copyBtnText">Copy</span>
+                    </button>
+                  </div>
+                  <span id="verdictBadge" class="verdict-badge relevant">
+                    <span class="status-pulsar" style="width: 6px; height: 6px;"></span> Ready for Query
+                  </span>
+                </div>
+
+                <!-- CRAG Notice Container -->
+                <div id="cragNoticeContainer" style="display: none;"></div>
+
+                <div class="answer-body" id="answerBody">
+                  Enter a question above or select an example query to execute the local retrieval pipeline and generate an evidence-grounded answer with source citations.
+                </div>
+
+                <div class="answer-footer-meta">
+                  <span id="pipelineMetaInfo">Status: Idle &bull; 0 sources cited</span>
+                  <span style="font-style: italic;">Grounding method: Sentence-level extraction</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Panel: Retrieved Evidence Panel -->
+            <div>
+              <div class="card" style="height: 100%;">
+                <div class="card-header">
+                  <div>
+                    <h2 class="card-title">
+                      <svg class="card-title-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                      </svg>
+                      Retrieved Evidence
+                    </h2>
+                    <span class="card-subtitle">Lexical Retrieval — Simplified DPR-Inspired Baseline</span>
+                  </div>
+                  <span id="evidenceCountBadge" class="score-badge">Top 3 Chunks</span>
+                </div>
+
+                <div id="evidenceList" class="evidence-list">
+                  <div class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <p class="empty-text">No question asked yet.<br>Retrieved document chunks will appear here with calculated BM25 relevance scores, highlighted tokens, and expandable full context.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: Document Library -->
+        <section id="tab-docs" class="tab-content">
+          <div class="doc-grid">
+            <!-- Left: Document List -->
+            <div>
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <h2 class="card-title">Indexed Corpus</h2>
+                    <span class="card-subtitle">Active documents in the retrieval index</span>
+                  </div>
+                  <button id="resetDocsBtn" class="btn btn-secondary btn-sm" title="Restore default sample documents">Reset Defaults</button>
+                </div>
+
+                <div id="docListContainer" class="doc-list">
+                  <!-- Populated dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- Add Document Card -->
+              <div class="card doc-action-card">
+                <div class="card-header">
+                  <h3 class="card-title">Add Custom Document</h3>
+                  <span class="card-subtitle">Extend knowledge corpus</span>
+                </div>
+
+                <!-- Text file upload dropzone -->
+                <div class="file-dropzone" id="fileDropzone">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 8px; color: var(--accent-cyan);">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <p style="font-size: 0.88rem; font-weight: 700; color: var(--text-main);">Upload .txt Document</p>
+                  <p style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 4px;">Click to browse or drag and drop a plain text file</p>
+                  <input type="file" id="fileInput" accept=".txt" style="display: none;">
+                </div>
+
+                <div class="form-group">
+                  <label class="input-label" for="newDocTitle">Document Title</label>
+                  <input type="text" id="newDocTitle" class="text-input" placeholder="e.g., Quantum Computing Fundamentals">
+                </div>
+
+                <div class="form-group">
+                  <label class="input-label" for="newDocContent">Document Content</label>
+                  <textarea id="newDocContent" class="textarea-input" placeholder="Paste full educational text with paragraphs..." rows="5"></textarea>
+                </div>
+
+                <button id="addDocBtn" class="btn btn-primary" style="width: 100%;">
+                  Index New Document
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Document Content & Chunks Preview -->
+            <div>
+              <div class="doc-preview-pane">
+                <div class="doc-preview-header">
+                  <div>
+                    <h3 id="previewDocTitle" style="font-size: 1.15rem; color: var(--text-main); font-weight: 800;">Select a document to inspect</h3>
+                    <p id="previewDocMeta" style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">Document overview and paragraph-aware chunk breakdown</p>
+                  </div>
+                  <span id="previewChunkCountBadge" class="score-badge">0 Chunks</span>
+                </div>
+
+                <div id="docPreviewContent" class="doc-preview-content">
+                  <div class="empty-state">
+                    <p class="empty-text">Select a document from the left panel to inspect its full text and indexed chunks.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: Methodology & Research -->
+        <section id="tab-methodology" class="tab-content">
+          <div class="card" style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Four RAG Research Frameworks</h2>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+              Retrieval-Augmented Generation spans multiple retrieval paradigms and architectures. This prototype implements functional algorithmic baselines for DPR and CRAG, while distinguishing them from future hierarchical and multimodal research extensions.
+            </p>
+          </div>
+
+          <div class="methodology-grid">
+            <!-- 1. DPR Card -->
+            <div class="method-card implemented">
+              <div>
+                <span class="method-tag implemented">Baseline Implemented</span>
+                <h3 class="method-title">Dense Passage Retrieval</h3>
+                <div class="method-acronym">DPR (Karpukhin et al., 2020)</div>
+                <p class="method-purpose">
+                  <strong>Purpose:</strong> Retrieve relevant passages from a large text corpus to provide grounded factual context for open-domain question answering.
+                </p>
+              </div>
+              <div class="method-status-note">
+                <strong>Status in Prototype:</strong> Simplified lexical retrieval baseline implemented (TF-IDF & BM25-inspired term overlap). Full dual-encoder neural DPR utilizing dense BERT embeddings is future work.
+              </div>
+            </div>
+
+            <!-- 2. CRAG Card -->
+            <div class="method-card implemented">
+              <div>
+                <span class="method-tag implemented">Feature Implemented</span>
+                <h3 class="method-title">Corrective RAG</h3>
+                <div class="method-acronym">CRAG (Yan et al., 2024)</div>
+                <p class="method-purpose">
+                  <strong>Purpose:</strong> Evaluate retrieval confidence to identify poor, partial, or ambiguous evidence, triggering corrective query reformulation or external search before answering.
+                </p>
+              </div>
+              <div class="method-status-note">
+                <strong>Status in Prototype:</strong> Basic corrective retrieval implemented: detects weak evidence scores, deterministically expands/broadens query terms, executes a secondary retrieval pass, and compares results.
+              </div>
+            </div>
+
+            <!-- 3. RAPTOR Card -->
+            <div class="method-card future">
+              <div>
+                <span class="method-tag future">Future Extension</span>
+                <h3 class="method-title">Hierarchical Summaries</h3>
+                <div class="method-acronym">RAPTOR (Sarthi et al., 2024)</div>
+                <p class="method-purpose">
+                  <strong>Purpose:</strong> Cluster text chunks recursively and generate multi-layered summary trees, enabling retrieval across different levels of abstraction (macro themes down to micro details).
+                </p>
+              </div>
+              <div class="method-status-note">
+                <strong>Status in Prototype:</strong> Future extension; not implemented in this local prototype. The current system operates on a single-tier paragraph chunking index.
+              </div>
+            </div>
+
+            <!-- 4. ColPali Card -->
+            <div class="method-card future">
+              <div>
+                <span class="method-tag future">Future Extension</span>
+                <h3 class="method-title">Visual Document Retrieval</h3>
+                <div class="method-acronym">ColPali (Févry et al., 2024)</div>
+                <p class="method-purpose">
+                  <strong>Purpose:</strong> Index and retrieve visually rich documents (PDFs, tables, diagrams) end-to-end via Vision Language Models (VLMs) and multi-vector late interaction, bypassing imperfect OCR.
+                </p>
+              </div>
+              <div class="method-status-note">
+                <strong>Status in Prototype:</strong> Future extension; not implemented in this local prototype. The current system operates strictly on plain text representations.
+              </div>
+            </div>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="card" style="margin-top: 24px;">
+            <div class="card-header">
+              <h3 class="card-title">Comparative Analysis Matrix</h3>
+              <span class="card-subtitle">Architectural comparison across the four methods</span>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="arch-table">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Core Paradigm</th>
+                    <th>Key Advantage</th>
+                    <th>Prototype Implementation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>DPR</strong></td>
+                    <td>Dense Bi-Encoder (Dual Transformer)</td>
+                    <td>Semantic matching beyond exact lexical overlap</td>
+                    <td><span class="status-badge" style="background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid var(--accent-primary-border); padding: 4px 10px; border-radius: 9999px;">Lexical DPR-Inspired Baseline</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>CRAG</strong></td>
+                    <td>Retrieval Evaluator & Corrective Actions</td>
+                    <td>Prevents hallucinations when retrieved documents are irrelevant</td>
+                    <td><span class="status-badge" style="background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); border: 1px solid var(--accent-cyan-border); padding: 4px 10px; border-radius: 9999px;">Deterministic Query Expansion & Secondary Pass</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>RAPTOR</strong></td>
+                    <td>Recursive Tree Summarization</td>
+                    <td>Answers holistic questions spanning entire long books/reports</td>
+                    <td><span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">Future Work (Not Implemented)</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>ColPali</strong></td>
+                    <td>Vision-Language Multi-Vector Late Interaction</td>
+                    <td>Preserves spatial layouts, infographics, charts, and tables</td>
+                    <td><span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">Future Work (Not Implemented)</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: System Architecture -->
+        <section id="tab-architecture" class="tab-content">
+          <div class="card" style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">System Architecture</h2>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+              The diagram below illustrates the end-to-end information flow of RAGnition. From query ingestion through chunk indexing, BM25 scoring, confidence assessment, corrective retrieval, and citation-grounded synthesis.
+            </p>
+          </div>
+
+          <!-- Flowchart Visual Container (Futuristic Dark Palette) -->
+          <div class="arch-diagram-wrapper">
+            <svg class="arch-svg" width="900" height="420" viewBox="0 0 900 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Definitions -->
+              <defs>
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#8B5CF6" />
+                </marker>
+                <marker id="arrowhead-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#22D3EE" />
+                </marker>
+                <marker id="arrowhead-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#F59E0B" />
+                </marker>
+                <marker id="arrowhead-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#10B981" />
+                </marker>
+              </defs>
+
+              <!-- Stage 1: User Question -->
+              <g transform="translate(30, 60)">
+                <rect width="130" height="60" rx="8" fill="#171F35" stroke="#8B5CF6" stroke-width="2"/>
+                <text x="65" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#F1F5F9" font-family="system-ui">User Question</text>
+                <text x="65" y="44" text-anchor="middle" font-size="10" fill="#94A3B8" font-family="system-ui">Natural Language</text>
+              </g>
+
+              <!-- Arrow 1 -> 2 -->
+              <line x1="160" y1="90" x2="200" y2="90" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Stage 2: Query Processing -->
+              <g transform="translate(205, 60)">
+                <rect width="140" height="60" rx="8" fill="#171F35" stroke="#8B5CF6" stroke-width="2"/>
+                <text x="70" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#F1F5F9" font-family="system-ui">Query Processing</text>
+                <text x="70" y="44" text-anchor="middle" font-size="9.5" fill="#94A3B8" font-family="system-ui">Tokenize & Stopwords</text>
+              </g>
+
+              <!-- Arrow 2 -> 3 -->
+              <line x1="345" y1="90" x2="385" y2="90" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Stage 3: Evidence Retrieval -->
+              <g transform="translate(390, 60)">
+                <rect width="140" height="60" rx="8" fill="#171F35" stroke="#22D3EE" stroke-width="2"/>
+                <text x="70" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#F1F5F9" font-family="system-ui">Evidence Retrieval</text>
+                <text x="70" y="44" text-anchor="middle" font-size="9.5" fill="#22D3EE" font-family="system-ui">BM25 / Lexical Overlap</text>
+              </g>
+
+              <!-- Arrow 3 -> 4 -->
+              <line x1="530" y1="90" x2="570" y2="90" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Stage 4: Relevance Assessment -->
+              <g transform="translate(575, 50)">
+                <polygon points="75,0 150,40 75,80 0,40" fill="#171F35" stroke="#8B5CF6" stroke-width="2"/>
+                <text x="75" y="38" text-anchor="middle" font-size="11" font-weight="700" fill="#F1F5F9" font-family="system-ui">Relevance Check</text>
+                <text x="75" y="52" text-anchor="middle" font-size="9" fill="#c4b5fd" font-family="system-ui">Score & Coverage</text>
+              </g>
+
+              <!-- Feed from Document Index into Evidence Retrieval -->
+              <g transform="translate(390, 220)">
+                <rect width="140" height="60" rx="8" fill="#11182B" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4"/>
+                <text x="70" y="26" text-anchor="middle" font-size="11" font-weight="700" fill="#F1F5F9" font-family="system-ui">Document Index</text>
+                <text x="70" y="44" text-anchor="middle" font-size="9.5" fill="#94A3B8" font-family="system-ui">Paragraph Chunks</text>
+              </g>
+              <line x1="460" y1="220" x2="460" y2="125" stroke="#64748B" stroke-width="1.5" stroke-dasharray="3" marker-end="url(#arrowhead)"/>
+
+              <!-- Path A: High Evidence -> Direct to Grounded Answer -->
+              <path d="M 725 90 L 770 90 L 770 200" fill="none" stroke="#10B981" stroke-width="2" marker-end="url(#arrowhead-green)"/>
+              <text x="740" y="80" font-size="10" font-weight="700" fill="#34D399" font-family="system-ui">Sufficient</text>
+
+              <!-- Path B: Low/Partial Evidence -> CRAG Corrective Branch -->
+              <path d="M 650 130 L 650 200" fill="none" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowhead-amber)"/>
+              <text x="658" y="165" font-size="10" font-weight="700" fill="#FBBF24" font-family="system-ui">Weak / Ambiguous</text>
+
+              <!-- Stage 5: CRAG Corrective Branch -->
+              <g transform="translate(575, 205)">
+                <rect width="150" height="60" rx="8" fill="#171F35" stroke="#F59E0B" stroke-width="2"/>
+                <text x="75" y="26" text-anchor="middle" font-size="11" font-weight="700" fill="#FBBF24" font-family="system-ui">CRAG Correction</text>
+                <text x="75" y="44" text-anchor="middle" font-size="9" fill="#94A3B8" font-family="system-ui">Query Expansion & Re-rank</text>
+              </g>
+
+              <!-- Branch from CRAG to synthesis or decline -->
+              <line x1="725" y1="235" x2="765" y2="235" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Stage 6: Evidence-Grounded Answer -->
+              <g transform="translate(720, 205)">
+                <rect width="150" height="65" rx="8" fill="#171F35" stroke="#22D3EE" stroke-width="2"/>
+                <text x="75" y="28" text-anchor="middle" font-size="11.5" font-weight="700" fill="#F1F5F9" font-family="system-ui">Grounded Answer</text>
+                <text x="75" y="46" text-anchor="middle" font-size="9.5" fill="#22D3EE" font-family="system-ui">Sentence Selection</text>
+              </g>
+
+              <!-- Arrow 6 -> 7 -->
+              <line x1="795" y1="270" x2="795" y2="310" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Stage 7: Source Citations -->
+              <g transform="translate(720, 315)">
+                <rect width="150" height="50" rx="8" fill="#11182B" stroke="#8B5CF6" stroke-width="1.5"/>
+                <text x="75" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd" font-family="system-ui">Source Citations</text>
+                <text x="75" y="39" text-anchor="middle" font-size="9" fill="#22D3EE" font-family="system-ui">[DocID, ChunkID]</text>
+              </g>
+
+              <!-- Decline to answer branch (if still insufficient) -->
+              <path d="M 650 265 L 650 340 L 480 340" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
+              <g transform="translate(340, 315)">
+                <rect width="135" height="50" rx="8" fill="#171F35" stroke="#EF4444" stroke-width="1.5"/>
+                <text x="67" y="23" text-anchor="middle" font-size="10.5" font-weight="700" fill="#F87171" font-family="system-ui">Decline to Answer</text>
+                <text x="67" y="38" text-anchor="middle" font-size="9" fill="#94A3B8" font-family="system-ui">Prevents Hallucination</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Architecture Notes -->
+          <div class="card">
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; color: var(--text-main);">Pipeline Stage Specifications</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+              <div style="padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 4px;">1. Query Ingestion & Processing</h4>
+                <p style="font-size: 0.82rem; color: var(--text-secondary);">Applies case folding, non-alphanumeric tokenization, stop-word filtering, and term frequency normalization.</p>
+              </div>
+              <div style="padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 4px;">2. Lexical Evidence Scoring</h4>
+                <p style="font-size: 0.82rem; color: var(--text-secondary);">Computes inverse document frequency (IDF) across chunks with BM25 term weighting to prioritize distinctive informative words.</p>
+              </div>
+              <div style="padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--warning-text); margin-bottom: 4px;">3. CRAG Evaluator & Correction</h4>
+                <p style="font-size: 0.82rem; color: var(--text-secondary);">Checks retrieval score confidence. Low scores trigger deterministic query broadening and a comparative secondary pass.</p>
+              </div>
+              <div style="padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 4px;">4. Synthesis & Grounding</h4>
+                <p style="font-size: 0.82rem; color: var(--text-secondary);">Extracts top-ranking informative sentences from retrieved chunks, constructing an answer accompanied by interactive citation anchors.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: Presentation Guide -->
+        <section id="tab-guide" class="tab-content">
+          <div class="card" style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Presentation & Demonstration Guide</h2>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+              Use this quick script and key talking points during your project seminar, viva, or classroom walkthrough.
+            </p>
+          </div>
+
+          <div class="guide-section">
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px;">Recommended 4-Step Demo Script</h3>
+            
+            <div class="guide-step">
+              <div class="guide-step-num">1</div>
+              <div class="guide-step-body">
+                <h4>Demonstrate Core RAG Retrieval (High Evidence)</h4>
+                <p>Click on <em>"What is Retrieval-Augmented Generation?"</em>. Point out the query processing tokens, the BM25 lexical score, the top 3 ranked chunks in the Evidence panel, and the generated answer with clickable citation pills linking back to chunk IDs.</p>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">2</div>
+              <div class="guide-step-body">
+                <h4>Demonstrate Multi-Document Corpus Discrimination</h4>
+                <p>Click on <em>"What causes climate change?"</em>. Show how the lexical retriever selects evidence strictly from the Climate Change document, filtering out unrelated AI/ML passages based on calculated term overlap.</p>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">3</div>
+              <div class="guide-step-body">
+                <h4>Demonstrate Hallucination Prevention & CRAG Fallback (Out-of-Domain)</h4>
+                <p>Click on <em>"What are the rules and regulations of lunar orbital spaceflight in 2050?"</em>. Highlight how the system detects Insufficient Evidence, attempts CRAG corrective expansion, detects that evidence remains inadequate, and strictly declines to synthesize an unsupported answer.</p>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">4</div>
+              <div class="guide-step-body">
+                <h4>Demonstrate Dynamic Corpus Ingestion</h4>
+                <p>Navigate to <em>"Document Library"</em>, paste a custom paragraph or upload a <code>.txt</code> file, click <em>"Index New Document"</em>, and execute a question against your new content in real time.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-section">
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">Key Academic Talking Points</h3>
+            <ul style="padding-left: 20px; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;">
+              <li><strong>RAG Motivation:</strong> Large Language Models suffer from hallucinations and static knowledge cutoff dates. RAG bridges this gap by grounding generations in an external verifiable document index.</li>
+              <li><strong>Lexical Baseline vs Neural DPR:</strong> Our prototype implements a deterministic TF-IDF/BM25 baseline. In production, neural DPR replaces this with dual BERT bi-encoders that map queries and passages to 768-dimensional dense vector spaces, enabling semantic retrieval even with zero vocabulary overlap.</li>
+              <li><strong>The Role of CRAG:</strong> Standard naive RAG blindly feeds whatever passages the retriever returns to the generator. CRAG adds an evaluator module: if the retrieved evidence is weak, it triggers corrective actions or abstains, ensuring high factual precision.</li>
+            </ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Full Chunk Inspection Modal -->
+  <div id="chunkModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalChunkId" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Chunk Details</h3>
+          <p id="modalDocTitle" style="font-size: 0.8rem; color: var(--text-secondary);">Document Source</p>
+        </div>
+        <button id="modalCloseBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div id="modalChunkBody" style="font-size: 0.92rem; line-height: 1.7; color: var(--text-secondary); background: var(--bg-surface); padding: 18px; border-radius: 8px; border: 1px solid var(--border-subtle); white-space: pre-wrap;"></div>
+      <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
+        <button id="modalDoneBtn" class="btn btn-secondary btn-sm">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
